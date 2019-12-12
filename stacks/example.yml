@@ -1,0 +1,6 @@
+name: example
+profile: your_aws_profile
+region: ap-northeast-1
+variables:
+  Ami:
+    amazonlinux2: ami-068a6cefc24c301d2

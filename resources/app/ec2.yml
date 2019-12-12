@@ -1,0 +1,7 @@
+ApplicationServer:
+  DependsOn: []
+  Type: AWS::EC2::Instance
+  Properties:
+    AvailabilityZone: ap-northeast-1c
+    ImageId: !Var Ami.amazonlinux2
+    InstanceType: t3.micro
