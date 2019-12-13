@@ -14,8 +14,18 @@ end
 STACKS = Dir["stacks/*.yml"].map {|f| YAML.load_file(f) }
 STACKS.each do |stack|
   namespace stack["name"] do
+    namespace "state" do
+      stack["states"].keys.each do |state|
+        desc "Set #{stack["name"]} state state to #{state}"
+        task state do
+          mkdir_p "states"
+          File.write("states/#{stack["name"]}", state)
+        end
+      end
+    end
+
     task "prepare" do
-      add_yaml_tags(stack["variables"])
+      add_yaml_tags(stack)
     end
 
     task "build" => "prepare" do

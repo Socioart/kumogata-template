@@ -1,7 +1,15 @@
 require "yaml"
 require "json"
+require "active_support/core_ext/hash"
 
-def add_yaml_tags(variables)
+def add_yaml_tags(stack)
+  unless File.exist?("states/#{stack["name"]}")
+    raise "Cannot found state for #{stack["name"]}. Please run rake #{stack["name"]}:state:*"
+  end
+
+  state_name = File.read("states/#{stack["name"]}").strip
+  variables = stack.fetch("variables").deep_merge(stack.fetch("states").fetch(state_name))
+
   # Register tags to parse abbreviated function call like `!Ref: Foo`
   # See: https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html
   %w(And Base64 Cidr Equals FindInMap GetAZs If ImportValue Join Not Or Select Split Sub Transform).each do |tag|
