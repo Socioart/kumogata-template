@@ -1,6 +1,6 @@
 # kumogata-template
 
-    git clone https://github.com/labocho/kumogata-template.git REPOSITORY_NAME
+    git clone https://github.com/socioart/kumogata-template.git REPOSITORY_NAME
     cd REPOSITORY_NAME
     direnv allow
     git remote remove origin
