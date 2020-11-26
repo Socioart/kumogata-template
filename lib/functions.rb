@@ -115,3 +115,23 @@ def build_template(stack)
   # because to_yaml may includes aliasesl, convert json before dump
   JSON.parse(template.to_json).to_yaml
 end
+
+# 文字列中の ${foo.bar} を stack の variable の値で置き換える
+def replace_var(o, stack)
+  case o
+  when Array
+    o.map {|e| replace_var(e, stack) }
+  when Hash
+    o = o.each_with_object({}) {|(k, v), h| h[k] = replace_var(v, stack) }
+    case o.keys
+    when %w($integer)
+      o["$integer"].to_i
+    else
+      o
+    end
+  when String
+    o.gsub(/\$\{([a-zA-Z\.]+?)\}/) { stack.var($1) }
+  else
+    o
+  end
+end
