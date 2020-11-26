@@ -12,6 +12,10 @@ def kumogata2(stack, subcommand_and_args)
   sh "kumogata2 --profile #{stack.profile} --region #{stack.region} --capabilities CAPABILITY_IAM,CAPABILITY_NAMED_IAM #{subcommand_and_args}"
 end
 
+def aws(stack, *subcommand_and_args)
+  sh "aws --profile #{stack.profile} --region #{stack.region} #{subcommand_and_args.shelljoin}"
+end
+
 
 STACKS = Dir["stacks/*.yml"].map {|f| Stack.load_file(f) }
 DASHBOARDS = Dir["dashboards/*.yml"].map {|f| File.basename(f).gsub(/\.yml$/, "") }
@@ -60,5 +64,19 @@ STACKS.each do |stack|
         kumogata2 stack, "update tmp/#{stack.name}.yml #{stack.name}"
       end
     end
+
+    namespace "dashboard" do
+      DASHBOARDS.each do |dashboard|
+        desc "Create / Update dashboard '#{dashboard}' for #{stack.name}"
+        task dashboard => "prepare" do
+          yaml = YAML.load_file("dashboards/#{dashboard}.yml")
+          yaml = replace_var(yaml, stack)
+          aws stack, "cloudwatch", "put-dashboard", "--dashboard-name", yaml["name"], "--dashboard-body", yaml["body"].to_json
+        end
+      end
+    end
+
+    desc "Create / Update all dashboards for #{stack.name}"
+    task "dashboard" => DASHBOARDS.map {|d| "dashboard:#{d}"}
   end
 end
