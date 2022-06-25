@@ -916,7 +916,7 @@ GEM
       aws-eventstream (~> 1.0, >= 1.0.2)
     coderay (1.1.2)
     concurrent-ruby (1.1.6)
-    diffy (3.3.0)
+    diffy (3.4.2)
     hashie (3.6.0)
     highline (2.0.3)
     i18n (1.8.2)
